@@ -4,6 +4,42 @@ import numpy as np
 import cv2
 
 
+def single_rect_mask(height, width, channels=3, max_rw=-1, max_rh=-1, min_rw=1, min_rh=1):
+    '''
+    Generates random rectangular mask images
+    :param height: height of the image
+    :param width: width of the image
+    :param channels: number of channels in image
+    :param max_rw: Max width of mask rectangle
+    :param max_rh: Max height of mask rectangle
+    :param min_rw: Min width of mask rectangle
+    :param min_rh: Min height of mask rectangle
+    :return: mask
+    '''
+
+    if width < 64 or height < 64:
+        raise Exception("Width and Height of mask must be at least 64!")
+
+    # Create an empty black image
+    img = np.zeros((height, width, channels), np.uint8)
+
+    # Draw ONE random rectangle
+    x1, y1 = randint(1, width-min_rw-4), randint(1, height-min_rh-4)
+    if max_rw == -1:
+        x2 = randint(x1+min_rw, width-3)
+    else:
+        x2 = randint(x1+min_rw, min(width-3, x1 + max_rw))
+
+    if max_rh == -1:
+        y2 =randint(y1+min_rh, height-3)
+    else:
+        y2 = randint(y1+min_rh, min(height - 3, y1 + max_rh))
+
+    cv2.rectangle(img, (x1,y1),(x2,y2), color=(1,1,1), thickness=cv2.FILLED)
+
+    return 1 - img
+
+
 def random_mask(height, width, channels=3):
     """Generates a random irregular mask with lines, circles and elipses"""    
     img = np.zeros((height, width, channels), np.uint8)
